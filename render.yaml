@@ -1,0 +1,105 @@
+services:
+  - type: web
+    name: solen-auth
+    runtime: python
+    rootDir: solen-auth
+    buildCommand: pip install -r requirements.txt && alembic upgrade head
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: APP_NAME
+        value: solen-auth
+      - key: ENVIRONMENT
+        value: production
+      - key: JWT_SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: solen-auth-db
+          property: connectionString
+
+  - type: web
+    name: solen-protocols
+    runtime: python
+    rootDir: solen-protocols
+    buildCommand: pip install -r requirements.txt && alembic upgrade head
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: APP_NAME
+        value: solen-protocols
+      - key: ENVIRONMENT
+        value: production
+      - key: JWT_SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: solen-protocols-db
+          property: connectionString
+      - key: ANALYTICS_SERVICE_URL
+        value: https://solen-analytics.onrender.com
+
+  - type: web
+    name: solen-analytics
+    runtime: python
+    rootDir: solen-analytics
+    buildCommand: pip install -r requirements.txt && alembic upgrade head
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: APP_NAME
+        value: solen-analytics
+      - key: ENVIRONMENT
+        value: production
+      - key: JWT_SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: solen-analytics-db
+          property: connectionString
+
+  - type: web
+    name: solen-notify
+    runtime: python
+    rootDir: solen-notify
+    buildCommand: pip install -r requirements.txt && alembic upgrade head
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: APP_NAME
+        value: solen-notify
+      - key: ENVIRONMENT
+        value: production
+      - key: JWT_SECRET_KEY
+        sync: false
+      - key: EXPO_ACCESS_TOKEN
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: solen-notify-db
+          property: connectionString
+
+databases:
+  - name: solen-auth-db
+    databaseName: solen_auth_db
+    user: solen
+    plan: free
+
+  - name: solen-protocols-db
+    databaseName: solen_protocols_db
+    user: solen
+    plan: free
+
+  - name: solen-analytics-db
+    databaseName: solen_analytics_db
+    user: solen
+    plan: free
+
+  - name: solen-notify-db
+    databaseName: solen_notify_db
+    user: solen
+    plan: free

@@ -1,0 +1,36 @@
+# Entorno
+.env
+.env.local
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# Node / carpeta mobile vieja (tiene su propio repo)
+node_modules/
+solen-mobile/
+
+# Archivos de build/zip
+*.zip
+*.tar.gz
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

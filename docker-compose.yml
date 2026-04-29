@@ -1,0 +1,162 @@
+version: "3.9"
+
+services:
+
+  # ── Bases de datos ──────────────────────────────────────────────
+
+  db-auth:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: solen_auth_db
+      POSTGRES_USER: solen
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-solen_dev_pass}
+    volumes:
+      - pgdata_auth:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U solen -d solen_auth_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  db-protocols:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: solen_protocols_db
+      POSTGRES_USER: solen
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-solen_dev_pass}
+    volumes:
+      - pgdata_protocols:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U solen -d solen_protocols_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  db-analytics:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: solen_analytics_db
+      POSTGRES_USER: solen
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-solen_dev_pass}
+    volumes:
+      - pgdata_analytics:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U solen -d solen_analytics_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  db-notify:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: solen_notify_db
+      POSTGRES_USER: solen
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-solen_dev_pass}
+    volumes:
+      - pgdata_notify:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U solen -d solen_notify_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Microservicios ──────────────────────────────────────────────
+
+  solen-auth:
+    build:
+      context: ./solen-auth
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      APP_NAME: solen-auth
+      PORT: "8001"
+      DATABASE_URL: postgresql+asyncpg://solen:${DB_PASSWORD:-solen_dev_pass}@db-auth:5432/solen_auth_db
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-dev_secret_change_in_production}
+      JWT_ALGORITHM: HS256
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+    depends_on:
+      db-auth:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  solen-protocols:
+    build:
+      context: ./solen-protocols
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      APP_NAME: solen-protocols
+      PORT: "8002"
+      DATABASE_URL: postgresql+asyncpg://solen:${DB_PASSWORD:-solen_dev_pass}@db-protocols:5432/solen_protocols_db
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-dev_secret_change_in_production}
+      JWT_ALGORITHM: HS256
+      ANALYTICS_SERVICE_URL: http://solen-analytics:8003
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+    depends_on:
+      db-protocols:
+        condition: service_healthy
+      solen-auth:
+        condition: service_started
+
+  solen-analytics:
+    build:
+      context: ./solen-analytics
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      APP_NAME: solen-analytics
+      PORT: "8003"
+      DATABASE_URL: postgresql+asyncpg://solen:${DB_PASSWORD:-solen_dev_pass}@db-analytics:5432/solen_analytics_db
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-dev_secret_change_in_production}
+      JWT_ALGORITHM: HS256
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+    depends_on:
+      db-analytics:
+        condition: service_healthy
+
+  solen-notify:
+    build:
+      context: ./solen-notify
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      APP_NAME: solen-notify
+      PORT: "8004"
+      DATABASE_URL: postgresql+asyncpg://solen:${DB_PASSWORD:-solen_dev_pass}@db-notify:5432/solen_notify_db
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-dev_secret_change_in_production}
+      JWT_ALGORITHM: HS256
+      EXPO_ACCESS_TOKEN: ${EXPO_ACCESS_TOKEN:-}
+      PROTOCOLS_SERVICE_URL: http://solen-protocols:8002
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+    depends_on:
+      db-notify:
+        condition: service_healthy
+
+  # ── API Gateway (nginx) ─────────────────────────────────────────
+
+  gateway:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - solen-auth
+      - solen-protocols
+      - solen-analytics
+      - solen-notify
+
+volumes:
+  pgdata_auth:
+  pgdata_protocols:
+  pgdata_analytics:
+  pgdata_notify:
