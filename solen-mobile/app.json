@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "Solen",
+    "slug": "solen",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "android": {
+      "package": "com.solen.app",
+      "versionCode": 1
+    },
+    "extra": {
+      "eas": {
+        "projectId": "1dc9056d-9281-43be-8d00-4a9f46fa0c9d"
+      }
+    },
+    "owner": "florpilo"
+  }
+}

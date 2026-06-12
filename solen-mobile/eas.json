@@ -1,0 +1,36 @@
+{
+  "cli": {
+    "version": ">= 13.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "preview": {
+      "android": {
+        "buildType": "apk"
+      },
+      "channel": "preview",
+      "env": {
+        "EXPO_PUBLIC_AUTH_URL": "https://solen-auth-production-f4b9.up.railway.app",
+        "EXPO_PUBLIC_PROTOCOLS_URL": "https://solen-protocols-production-10e0.up.railway.app",
+        "EXPO_PUBLIC_ANALYTICS_URL": "https://solen-analytics-production-fcb5.up.railway.app",
+        "EXPO_PUBLIC_NOTIFY_URL": "https://solen-notify-production.up.railway.app"
+      }
+    },
+    "production": {
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "channel": "production",
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_AUTH_URL": "https://solen-auth-production-f4b9.up.railway.app",
+        "EXPO_PUBLIC_PROTOCOLS_URL": "https://solen-protocols-production-10e0.up.railway.app",
+        "EXPO_PUBLIC_ANALYTICS_URL": "https://solen-analytics-production-fcb5.up.railway.app",
+        "EXPO_PUBLIC_NOTIFY_URL": "https://solen-notify-production.up.railway.app"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

@@ -1,0 +1,4 @@
+node_modules/
+.expo/
+eas-build-*.txt
+eas-build-*.bin

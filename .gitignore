@@ -20,9 +20,8 @@ env/
 .idea/
 *.code-workspace
 
-# Node / carpeta mobile vieja (tiene su propio repo)
+# Node
 node_modules/
-solen-mobile/
 
 # Archivos de build/zip
 *.zip
