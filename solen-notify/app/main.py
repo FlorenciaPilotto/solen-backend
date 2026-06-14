@@ -39,6 +39,8 @@ async def _broadcast_latigo(tipo: str) -> None:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    async with engine.begin() as conn:
+        await conn.run_sync(_models.Base.metadata.create_all)
     # Programar el látigo de identidad
     scheduler.add_job(_broadcast_latigo, CronTrigger(hour=5,  minute=0),  args=["round_uno"],     id="round_uno")
     scheduler.add_job(_broadcast_latigo, CronTrigger(hour=9,  minute=0),  args=["accion_masiva"], id="accion_masiva")
@@ -59,7 +61,10 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+if settings.is_production:
+    # En producción no hay gateway nginx delante: cada servicio expone su propio dominio.
+    app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+
 app.add_exception_handler(AppError, app_error_handler)
 app.add_exception_handler(Exception, unhandled_error_handler)
 app.include_router(notify.router)
