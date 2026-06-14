@@ -5,13 +5,15 @@ from app.core.config import get_settings
 from app.core.exceptions import AppError, app_error_handler, unhandled_error_handler
 from app.db.session import engine, ping_db
 from app.db import base as _models  # noqa
-from app.api.routes import protocolo
+from app.api.routes import protocolo, coach
 
 settings = get_settings()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    async with engine.begin() as conn:
+        await conn.run_sync(_models.Base.metadata.create_all)
     yield
     await engine.dispose()
 
@@ -24,10 +26,14 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+if settings.is_production:
+    # En producción no hay gateway nginx delante: cada servicio expone su propio dominio.
+    app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+
 app.add_exception_handler(AppError, app_error_handler)
 app.add_exception_handler(Exception, unhandled_error_handler)
 app.include_router(protocolo.router)
+app.include_router(coach.router)
 
 
 @app.get("/health", include_in_schema=False)

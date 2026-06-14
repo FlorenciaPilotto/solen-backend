@@ -78,6 +78,8 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY:-dev_secret_change_in_production}
       JWT_ALGORITHM: HS256
       ENVIRONMENT: ${ENVIRONMENT:-development}
+    ports:
+      - "8001:8001"
     depends_on:
       db-auth:
         condition: service_healthy
@@ -100,6 +102,8 @@ services:
       JWT_ALGORITHM: HS256
       ANALYTICS_SERVICE_URL: http://solen-analytics:8003
       ENVIRONMENT: ${ENVIRONMENT:-development}
+    ports:
+      - "8002:8002"
     depends_on:
       db-protocols:
         condition: service_healthy
@@ -118,6 +122,8 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY:-dev_secret_change_in_production}
       JWT_ALGORITHM: HS256
       ENVIRONMENT: ${ENVIRONMENT:-development}
+    ports:
+      - "8003:8003"
     depends_on:
       db-analytics:
         condition: service_healthy
@@ -136,9 +142,31 @@ services:
       EXPO_ACCESS_TOKEN: ${EXPO_ACCESS_TOKEN:-}
       PROTOCOLS_SERVICE_URL: http://solen-protocols:8002
       ENVIRONMENT: ${ENVIRONMENT:-development}
+    ports:
+      - "8004:8004"
     depends_on:
       db-notify:
         condition: service_healthy
+
+  solen-ai:
+    build:
+      context: ./solen-ai
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      APP_NAME: solen-ai
+      PORT: "8005"
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-dev_secret_change_in_production}
+      JWT_ALGORITHM: HS256
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+    ports:
+      - "8005:8005"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   # ── API Gateway (nginx) ─────────────────────────────────────────
 

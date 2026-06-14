@@ -3,17 +3,13 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    app_name: str = "solen-protocols"
+    app_name: str = "solen-ai"
     version: str = "1.0.0"
     environment: str = "development"
-    port: int = 8002
-    debug: bool = False
-    database_url: str
+    port: int = 8005
     jwt_secret_key: str
     jwt_algorithm: str = "HS256"
-    analytics_service_url: str = "http://localhost:8003"
-    anthropic_api_key: str = ""
-    anthropic_model: str = "claude-haiku-4-5-20251001"
+    anthropic_api_key: str
 
     @property
     def is_production(self) -> bool:

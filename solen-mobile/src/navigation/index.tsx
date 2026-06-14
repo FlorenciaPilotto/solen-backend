@@ -12,6 +12,7 @@ import { RespiracionScreen }        from '../screens/RespiracionScreen';
 import { PinealScreen }             from '../screens/PinealScreen';
 import { HistorialScreen }          from '../screens/HistorialScreen';
 import { JournalScreen }            from '../screens/JournalScreen';
+import { CoachScreen }              from '../screens/CoachScreen';
 import { IntegrityJournalScreen }   from '../screens/IntegrityJournalScreen';
 import { AccionMasivaScreen }       from '../screens/AccionMasivaScreen';
 
@@ -46,6 +47,7 @@ function AppNav() {
       tabBarLabelStyle: { fontSize: 9, fontWeight: fonts.medium, letterSpacing: 0.8 },
     }}>
       <AppTab.Screen name="Estado"    component={HomeScreen}     options={{ title: 'Estado' }} />
+      <AppTab.Screen name="Coach"     component={CoachScreen}    options={{ title: 'Coach' }} />
       <AppTab.Screen name="Historial" component={HistorialScreen} options={{ title: 'Historial' }} />
     </AppTab.Navigator>
   );
