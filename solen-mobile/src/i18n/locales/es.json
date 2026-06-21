@@ -1,0 +1,245 @@
+{
+  "common": {
+    "continue": "Continuar",
+    "save": "Guardar",
+    "close": "Cerrar",
+    "back": "← Volver",
+    "saving": "Guardando...",
+    "pts": "pts"
+  },
+  "nav": {
+    "estado": "Estado",
+    "coach": "Coach",
+    "historial": "Historial"
+  },
+  "auth": {
+    "appName": "Solen",
+    "fillFields": "Completá todos los campos.",
+    "login": {
+      "subtitle": "Sistema de Identidad",
+      "email": "Email",
+      "password": "Contraseña",
+      "submit": "Iniciar sesión",
+      "noAccount": "¿Primera vez?",
+      "createAccount": "Crear cuenta"
+    },
+    "register": {
+      "subtitle": "Crear identidad",
+      "name": "Tu nombre",
+      "passwordHint": "Contraseña (mín. 8 chars, letras y números)",
+      "submit": "Crear cuenta",
+      "hasAccount": "¿Ya tenés cuenta?",
+      "signIn": "Iniciar sesión"
+    }
+  },
+  "home": {
+    "greeting": {
+      "morning": "Buenos días",
+      "afternoon": "Buenas tardes",
+      "evening": "Buenas noches"
+    },
+    "signOut": "Salir",
+    "analytics": {
+      "creation": "Creación",
+      "streak": "Racha",
+      "biohack": "Bio-Hack"
+    },
+    "selector": {
+      "survival": "Supervivencia",
+      "creation": "Creación",
+      "neutral": "Neutro",
+      "labelSurvival": "Supervivencia",
+      "labelCreation": "Creación",
+      "labelNeutral": "Neutro"
+    },
+    "protocol": {
+      "rescue": "Protocolo de Rescate",
+      "expansion": "Protocolo de Expansión",
+      "rescueSub": "5 min · Ancla de Serotonina",
+      "expansionSub": "10 min · Fuego y Magnetismo"
+    },
+    "rounds": {
+      "title": "Rounds del día",
+      "activate": "Activar →",
+      "start": "Iniciar →",
+      "journalStart": "Journal de Inicio",
+      "journalStartDone": "✓ Journal de inicio completado",
+      "journalStartSub": "Claridad antes de actuar · +10 pts",
+      "journalStartDoneSub": "Claridad establecida · +10 pts",
+      "roundOne": "Round Uno",
+      "roundOneSub": "5:00 AM · +15–50 pts",
+      "actionMassive": "Acción Masiva",
+      "actionMassiveSub": "90 min · +40 pts",
+      "pineal": "Pineal",
+      "pinealSub": "22:00 · +20 pts",
+      "journalIntegrity": "Journal de Integridad",
+      "journalIntegrityDone": "✓ Journal completado",
+      "journalIntegritySub": "Módulo nocturno · +20 pts",
+      "journalIntegrityDoneSub": "Ver resumen"
+    },
+    "streak": {
+      "days": "días de racha",
+      "best": "Mejor:"
+    }
+  },
+  "journal": {
+    "title": "Journal\nde Inicio",
+    "subtitle": "5:00 AM · Claridad antes de actuar",
+    "energy": {
+      "label": "Energía · 1 de 3",
+      "question": "¿Con qué energía amaneciste?",
+      "high": "Alta",
+      "medium": "Media",
+      "low": "Baja",
+      "sliderLow": "Sin energía",
+      "sliderHigh": "Fuego total"
+    },
+    "intention": {
+      "label": "Intención · 2 de 3",
+      "question": "¿Cuál es tu intención central del día?",
+      "placeholder": "Completar el módulo X, conectar con alguien..."
+    },
+    "identity": {
+      "label": "Identidad · 3 de 3",
+      "question": "¿Quién elegís ser hoy?",
+      "placeholder": "Hoy soy alguien que...",
+      "error": "Escribí quién vas a ser hoy."
+    },
+    "start": "Comenzar el día",
+    "saveError": "No se pudo guardar. Intentá de nuevo."
+  },
+  "integrityJournal": {
+    "steps": {
+      "intention": {
+        "num": "01 / 04",
+        "title": "¿Qué necesitás de este journal hoy?",
+        "sub": "Elegí lo que más resuena. Ajusta las preguntas siguientes."
+      },
+      "emotion": {
+        "num": "02 / 04",
+        "title": "¿Cuál fue la emoción dominante hoy?",
+        "defaultSub": "Sin juzgar. Solo observar."
+      },
+      "coherence": {
+        "num": "03 / 04",
+        "title": "¿Cumpliste tu palabra hoy?",
+        "sub": "Entre lo que dijiste que harías y lo que hiciste.",
+        "sliderLow": "No cumplí",
+        "sliderHigh": "Integridad total",
+        "levels": {
+          "architect": "Arquitecto en potencia",
+          "creator": "Creador activo",
+          "reactive": "Reactivo",
+          "inertia": "Inercia presente"
+        }
+      },
+      "closure": {
+        "num": "04 / 04",
+        "title": "Cierre del día",
+        "defaultGift": "¿Qué regalo recibiste hoy?",
+        "defaultIdentity": "¿Qué acción confirmó que ya no sos la persona del pasado?",
+        "defaultGiftPlaceholder": "una charla, un insight, un café tranquilo...",
+        "defaultIdentityPlaceholder": "Hoy elegí... a pesar de...",
+        "generateCard": "Generar mi tarjeta →"
+      }
+    },
+    "continueBtn": "Continuar →",
+    "card": {
+      "label": "Tarjeta de identidad",
+      "coherenceLabel": "Coherencia del día",
+      "giftLabel": "Regalo del día",
+      "identityLabel": "Identidad confirmada",
+      "footer": "Solen · Sistema de Identidad",
+      "saveClose": "Guardar y cerrar"
+    }
+  },
+  "accion": {
+    "back": "← Volver",
+    "tag": "Round Dos · Acción Masiva",
+    "title": "90 minutos de\nflujo completo",
+    "sub": "Sin interrupciones. Sin notificaciones.\nSolo lo que mueve la aguja.",
+    "timer": {
+      "flow": "En flujo",
+      "paused": "Pausado",
+      "ready": "Preparado"
+    },
+    "task": {
+      "question": "¿Cuál es la tarea de mayor impacto?",
+      "placeholder": "Escribir capítulo 3, terminar propuesta, código...",
+      "active": "Tarea activa"
+    },
+    "start": "Iniciar Round Dos",
+    "pause": "Pausar",
+    "resume": "Continuar",
+    "complete": "Completar",
+    "dnd": "Modo No Molestar activado durante la sesión",
+    "alert": {
+      "noTask": "¿Cuál es tu tarea?",
+      "noTaskMsg": "Definí la tarea de alto impacto antes de iniciar.",
+      "doneTitle": "¡Acción Masiva completada!",
+      "doneMsg": "+40 puntos de identidad. El trabajo profundo forja quién sos.",
+      "back": "Volver"
+    }
+  },
+  "coach": {
+    "title": "Coach",
+    "subtitle": "Bioquímica de la Consciencia",
+    "welcome": "Hola. Estoy acá para ayudarte a forjar una nueva identidad y recuperar tu centro.\n\n¿Qué está sintiendo tu cuerpo y tu mente en este preciso momento?",
+    "typing": "Escribiendo...",
+    "placeholder": "Escribí lo que sentís..."
+  },
+  "historial": {
+    "title": "Historial",
+    "nivelLabel": "Nivel de Identidad",
+    "empty": "Sin protocolos todavía.",
+    "emptySub": "Hacé tu primer check-in."
+  },
+  "guia": {
+    "title": "Guía para Testers",
+    "intro": "Gracias por testear Solen. Esta guía explica cómo instalar la app y qué flujos probar.",
+    "sections": {
+      "install": {
+        "title": "Instalación",
+        "items": [
+          "Abrí el link de descarga que te compartimos.",
+          "Si Android pide habilitar \"Instalar apps de fuentes desconocidas\", habilitalo en Ajustes → Seguridad.",
+          "Instalá el APK y abrí Solen.",
+          "Registrate con tu email y una contraseña (mínimo 8 caracteres, al menos una letra y un número)."
+        ]
+      },
+      "flows": {
+        "title": "Flujos a testear",
+        "items": [
+          "① Registro e inicio de sesión — registrate, cerrá sesión y volvé a entrar.",
+          "② Round Uno — tocá \"Round Uno\" y completá el protocolo de respiración.",
+          "③ Journal de Inicio — completá el journal antes de las 12:00 hs.",
+          "④ Acción Masiva — iniciá el round y verificá que el timer funcione.",
+          "⑤ Protocolo de estado — mové el slider y tocá el botón de protocolo.",
+          "⑥ Coach — enviá un mensaje y esperá la respuesta de IA.",
+          "⑦ Pineal — iniciá el Round Tres y completá la sesión.",
+          "⑧ Journal de Integridad — completalo al final del día.",
+          "⑨ Historial — verificá que los datos del día aparezcan."
+        ]
+      },
+      "bugs": {
+        "title": "Cómo reportar un bug",
+        "items": [
+          "Describí qué hiciste paso a paso.",
+          "Indicá qué esperabas que pasara y qué pasó en cambio.",
+          "Si podés, adjuntá una captura de pantalla.",
+          "Mandanos el reporte por el canal que te indicamos."
+        ]
+      },
+      "notes": {
+        "title": "Notas importantes",
+        "items": [
+          "Esta es una versión de prueba — los datos pueden resetearse entre versiones.",
+          "El Coach de IA consume créditos reales, usalo con criterio.",
+          "Si la app no carga datos, verificá tu conexión a internet.",
+          "Si encontrás un crash, cerrá y volvé a abrir la app antes de reportar."
+        ]
+      }
+    },
+    "version": "Versión beta · Solen"
+  }
+}

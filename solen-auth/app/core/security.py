@@ -1,4 +1,5 @@
 import re
+import uuid
 from datetime import datetime, timedelta, timezone
 from jose import jwt
 from passlib.context import CryptContext
@@ -21,7 +22,7 @@ def validate_password_strength(password: str) -> str:
 
 def create_token(payload: dict, expire_delta: timedelta) -> str:
     now = datetime.now(timezone.utc)
-    data = {**payload, "iat": now, "exp": now + expire_delta}
+    data = {**payload, "iat": now, "exp": now + expire_delta, "jti": uuid.uuid4().hex}
     return jwt.encode(data, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
 
 def decode_token(token: str) -> dict:

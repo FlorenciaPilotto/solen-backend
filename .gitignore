@@ -33,3 +33,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Google Play service account (no commitear)
+google-service-account.json

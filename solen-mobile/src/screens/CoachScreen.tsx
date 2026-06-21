@@ -3,11 +3,13 @@ import {
   View, Text, StyleSheet, TextInput, TouchableOpacity,
   FlatList, KeyboardAvoidingView, Platform, ActivityIndicator,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { coachService, CoachMessage } from '../api/protocols';
 import { getApiError } from '../api/client';
 import { colors, spacing, radius, fonts } from '../theme';
 
 export function CoachScreen() {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState<CoachMessage[]>([]);
   const [input, setInput]       = useState('');
   const [loading, setLoading]   = useState(true);
@@ -54,8 +56,8 @@ export function CoachScreen() {
   return (
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={styles.header}>
-        <Text style={styles.title}>Coach</Text>
-        <Text style={styles.subtitle}>Bioquímica de la Consciencia</Text>
+        <Text style={styles.title}>{t('coach.title')}</Text>
+        <Text style={styles.subtitle}>{t('coach.subtitle')}</Text>
       </View>
 
       {loading ? (
@@ -71,11 +73,7 @@ export function CoachScreen() {
           contentContainerStyle={styles.listContent}
           ListEmptyComponent={
             <View style={styles.welcome}>
-              <Text style={styles.welcomeText}>
-                Hola. Estoy acá para ayudarte a forjar una nueva identidad y recuperar tu centro.
-                {'\n\n'}
-                ¿Qué está sintiendo tu cuerpo y tu mente en este preciso momento?
-              </Text>
+              <Text style={styles.welcomeText}>{t('coach.welcome')}</Text>
             </View>
           }
           renderItem={({ item }) => (
@@ -91,7 +89,7 @@ export function CoachScreen() {
       {sending && (
         <View style={styles.typing}>
           <ActivityIndicator size="small" color={colors.textMuted} />
-          <Text style={styles.typingText}>Escribiendo...</Text>
+          <Text style={styles.typingText}>{t('coach.typing')}</Text>
         </View>
       )}
 
@@ -100,7 +98,7 @@ export function CoachScreen() {
       <View style={styles.inputRow}>
         <TextInput
           style={styles.input}
-          placeholder="Escribí lo que sentís..."
+          placeholder={t('coach.placeholder')}
           placeholderTextColor={colors.textHint}
           value={input}
           onChangeText={setInput}
@@ -122,28 +120,21 @@ export function CoachScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-
   header: { padding: spacing.lg, paddingTop: spacing.xl + spacing.md, paddingBottom: spacing.sm },
   title: { fontSize: 24, fontWeight: fonts.light, color: colors.textPrimary },
   subtitle: { fontSize: 11, fontWeight: fonts.light, color: colors.textHint, marginTop: 2 },
-
   list: { flex: 1 },
   listContent: { padding: spacing.lg, paddingTop: spacing.sm, gap: spacing.sm, flexGrow: 1 },
-
   welcome: { flex: 1, justifyContent: 'center', paddingHorizontal: spacing.md },
   welcomeText: { fontSize: 14, fontWeight: fonts.light, color: colors.textSecondary, lineHeight: 22, textAlign: 'center' },
-
   bubble: { maxWidth: '85%', padding: spacing.md, borderRadius: radius.md },
   bubbleAssistant: { alignSelf: 'flex-start', backgroundColor: colors.bgCard, borderWidth: 0.5, borderColor: colors.bgCardBorder },
   bubbleUser: { alignSelf: 'flex-end', backgroundColor: colors.accent },
   bubbleText: { fontSize: 14, fontWeight: fonts.light, color: colors.textPrimary, lineHeight: 20 },
   bubbleTextUser: { color: '#000000' },
-
   typing: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.lg, paddingBottom: spacing.xs },
   typingText: { fontSize: 11, fontWeight: fonts.light, color: colors.textMuted },
-
   error: { fontSize: 12, fontWeight: fonts.light, color: colors.error, textAlign: 'center', paddingHorizontal: spacing.lg, paddingBottom: spacing.xs },
-
   inputRow: { flexDirection: 'row', alignItems: 'flex-end', gap: spacing.sm, padding: spacing.lg, paddingTop: spacing.sm, borderTopWidth: 0.5, borderTopColor: colors.borderSubtle },
   input: { flex: 1, backgroundColor: colors.bgCard, borderWidth: 0.5, borderColor: colors.bgCardBorder, borderRadius: radius.md, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, fontSize: 14, fontWeight: fonts.light, color: colors.textPrimary, maxHeight: 100 },
   sendBtn: { width: 40, height: 40, borderRadius: radius.full, backgroundColor: colors.accent, alignItems: 'center', justifyContent: 'center' },

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import { protocolsService, ProtocolSummary } from '../api/protocols';
 import { analyticsService } from '../api/protocols';
 import { getPoder } from '../store/storage';
@@ -14,6 +15,7 @@ const TYPE_COLORS: Record<string, string> = {
 };
 
 export function HistorialScreen() {
+  const { t } = useTranslation();
   const [items, setItems] = useState<ProtocolSummary[]>([]);
   const [poder, setPoder] = useState<PoderIdentidad | null>(null);
   const [loading, setLoading] = useState(true);
@@ -36,17 +38,17 @@ export function HistorialScreen() {
 
   return (
     <View style={s.container}>
-      <Text style={s.title}>Historial</Text>
+      <Text style={s.title}>{t('historial.title')}</Text>
 
       {poder && (
         <View style={s.nivelCard}>
           <View>
-            <Text style={s.nivelLabel}>Nivel de Identidad</Text>
+            <Text style={s.nivelLabel}>{t('historial.nivelLabel')}</Text>
             <Text style={s.nivelNivel}>{poder.nivel}</Text>
           </View>
           <View style={s.nivelRight}>
             <Text style={s.nivelPts}>{poder.total}</Text>
-            <Text style={s.nivelPtsLabel}>pts</Text>
+            <Text style={s.nivelPtsLabel}>{t('common.pts')}</Text>
           </View>
         </View>
       )}
@@ -59,13 +61,13 @@ export function HistorialScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} tintColor={colors.creacion.primary} />}
         ListEmptyComponent={
           <View style={s.empty}>
-            <Text style={s.emptyTxt}>Sin protocolos todavía.</Text>
-            <Text style={s.emptySub}>Hacé tu primer check-in.</Text>
+            <Text style={s.emptyTxt}>{t('historial.empty')}</Text>
+            <Text style={s.emptySub}>{t('historial.emptySub')}</Text>
           </View>
         }
         renderItem={({ item }) => {
           const color = TYPE_COLORS[item.protocol_type] ?? colors.neutro.primary;
-          const date = new Date(item.created_at).toLocaleDateString('es-AR', { weekday: 'short', day: 'numeric', month: 'short' });
+          const date = new Date(item.created_at).toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' });
           return (
             <View style={s.item}>
               <View style={[s.dot, { backgroundColor: color }]} />

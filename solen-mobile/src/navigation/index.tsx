@@ -3,6 +3,7 @@ import { View, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { colors, fonts } from '../theme';
 import { LoginScreen }              from '../screens/LoginScreen';
@@ -15,13 +16,15 @@ import { JournalScreen }            from '../screens/JournalScreen';
 import { CoachScreen }              from '../screens/CoachScreen';
 import { IntegrityJournalScreen }   from '../screens/IntegrityJournalScreen';
 import { AccionMasivaScreen }       from '../screens/AccionMasivaScreen';
+import { GuiaScreen }               from '../screens/GuiaScreen';
 
 export type AuthStackParams = { Login: undefined; Register: undefined; };
 export type RootStackParams = {
   Auth: undefined; App: undefined;
   Journal: undefined; IntegrityJournal: undefined;
   AccionMasiva: undefined; Pineal: undefined;
-  Respiracion: { protocolo: 'rescate' | 'expansion' | 'coherencia' | 'pineal' };
+  Guia: undefined;
+  Respiracion: { protocolo: 'rescate' | 'expansion' | 'coherencia' | 'pineal'; roundUno?: boolean };
 };
 
 const AuthStack = createNativeStackNavigator<AuthStackParams>();
@@ -38,6 +41,7 @@ function AuthNav() {
 }
 
 function AppNav() {
+  const { t } = useTranslation();
   return (
     <AppTab.Navigator screenOptions={{
       headerShown: false,
@@ -46,9 +50,9 @@ function AppNav() {
       tabBarInactiveTintColor: colors.textHint,
       tabBarLabelStyle: { fontSize: 9, fontWeight: fonts.medium, letterSpacing: 0.8 },
     }}>
-      <AppTab.Screen name="Estado"    component={HomeScreen}     options={{ title: 'Estado' }} />
-      <AppTab.Screen name="Coach"     component={CoachScreen}    options={{ title: 'Coach' }} />
-      <AppTab.Screen name="Historial" component={HistorialScreen} options={{ title: 'Historial' }} />
+      <AppTab.Screen name="Estado"    component={HomeScreen}      options={{ title: t('nav.estado') }} />
+      <AppTab.Screen name="Coach"     component={CoachScreen}     options={{ title: t('nav.coach') }} />
+      <AppTab.Screen name="Historial" component={HistorialScreen} options={{ title: t('nav.historial') }} />
     </AppTab.Navigator>
   );
 }
@@ -68,6 +72,7 @@ export function RootNavigator() {
             <Root.Screen name="AccionMasiva"     component={AccionMasivaScreen}     options={{ presentation: 'modal' }} />
             <Root.Screen name="Pineal"           component={PinealScreen}           options={{ presentation: 'modal' }} />
             <Root.Screen name="Respiracion"      component={RespiracionScreen}      options={{ presentation: 'modal' }} />
+            <Root.Screen name="Guia"             component={GuiaScreen}             options={{ presentation: 'modal' }} />
           </>
         ) : (
           <Root.Screen name="Auth" component={AuthNav} />

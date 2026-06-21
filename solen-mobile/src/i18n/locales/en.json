@@ -1,0 +1,245 @@
+{
+  "common": {
+    "continue": "Continue",
+    "save": "Save",
+    "close": "Close",
+    "back": "← Back",
+    "saving": "Saving...",
+    "pts": "pts"
+  },
+  "nav": {
+    "estado": "Status",
+    "coach": "Coach",
+    "historial": "History"
+  },
+  "auth": {
+    "appName": "Solen",
+    "fillFields": "Please fill in all fields.",
+    "login": {
+      "subtitle": "Identity System",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in",
+      "noAccount": "First time?",
+      "createAccount": "Create account"
+    },
+    "register": {
+      "subtitle": "Create identity",
+      "name": "Your name",
+      "passwordHint": "Password (min. 8 chars, letters and numbers)",
+      "submit": "Create account",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in"
+    }
+  },
+  "home": {
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "signOut": "Sign out",
+    "analytics": {
+      "creation": "Creation",
+      "streak": "Streak",
+      "biohack": "Bio-Hack"
+    },
+    "selector": {
+      "survival": "Survival",
+      "creation": "Creation",
+      "neutral": "Neutral",
+      "labelSurvival": "Survival",
+      "labelCreation": "Creation",
+      "labelNeutral": "Neutral"
+    },
+    "protocol": {
+      "rescue": "Rescue Protocol",
+      "expansion": "Expansion Protocol",
+      "rescueSub": "5 min · Serotonin Anchor",
+      "expansionSub": "10 min · Fire and Magnetism"
+    },
+    "rounds": {
+      "title": "Daily Rounds",
+      "activate": "Activate →",
+      "start": "Start →",
+      "journalStart": "Morning Journal",
+      "journalStartDone": "✓ Morning journal completed",
+      "journalStartSub": "Clarity before action · +10 pts",
+      "journalStartDoneSub": "Clarity established · +10 pts",
+      "roundOne": "Round One",
+      "roundOneSub": "5:00 AM · +15–50 pts",
+      "actionMassive": "Massive Action",
+      "actionMassiveSub": "90 min · +40 pts",
+      "pineal": "Pineal",
+      "pinealSub": "10:00 PM · +20 pts",
+      "journalIntegrity": "Integrity Journal",
+      "journalIntegrityDone": "✓ Journal completed",
+      "journalIntegritySub": "Night module · +20 pts",
+      "journalIntegrityDoneSub": "View summary"
+    },
+    "streak": {
+      "days": "streak days",
+      "best": "Best:"
+    }
+  },
+  "journal": {
+    "title": "Morning\nJournal",
+    "subtitle": "5:00 AM · Clarity before action",
+    "energy": {
+      "label": "Energy · 1 of 3",
+      "question": "How's your energy this morning?",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low",
+      "sliderLow": "No energy",
+      "sliderHigh": "Full fire"
+    },
+    "intention": {
+      "label": "Intention · 2 of 3",
+      "question": "What's your main intention for today?",
+      "placeholder": "Complete module X, connect with someone..."
+    },
+    "identity": {
+      "label": "Identity · 3 of 3",
+      "question": "Who do you choose to be today?",
+      "placeholder": "Today I am someone who...",
+      "error": "Write who you're going to be today."
+    },
+    "start": "Start the day",
+    "saveError": "Couldn't save. Please try again."
+  },
+  "integrityJournal": {
+    "steps": {
+      "intention": {
+        "num": "01 / 04",
+        "title": "What do you need from this journal today?",
+        "sub": "Choose what resonates most. It adjusts the following questions."
+      },
+      "emotion": {
+        "num": "02 / 04",
+        "title": "What was the dominant emotion today?",
+        "defaultSub": "No judgment. Just observe."
+      },
+      "coherence": {
+        "num": "03 / 04",
+        "title": "Did you keep your word today?",
+        "sub": "Between what you said you'd do and what you actually did.",
+        "sliderLow": "Didn't follow through",
+        "sliderHigh": "Full integrity",
+        "levels": {
+          "architect": "Potential architect",
+          "creator": "Active creator",
+          "reactive": "Reactive",
+          "inertia": "Inertia present"
+        }
+      },
+      "closure": {
+        "num": "04 / 04",
+        "title": "Day closure",
+        "defaultGift": "What gift did you receive today?",
+        "defaultIdentity": "What action confirmed you're no longer the person you used to be?",
+        "defaultGiftPlaceholder": "a conversation, an insight, a quiet coffee...",
+        "defaultIdentityPlaceholder": "Today I chose... despite...",
+        "generateCard": "Generate my card →"
+      }
+    },
+    "continueBtn": "Continue →",
+    "card": {
+      "label": "Identity card",
+      "coherenceLabel": "Day coherence",
+      "giftLabel": "Day gift",
+      "identityLabel": "Confirmed identity",
+      "footer": "Solen · Identity System",
+      "saveClose": "Save and close"
+    }
+  },
+  "accion": {
+    "back": "← Back",
+    "tag": "Round Two · Massive Action",
+    "title": "90 minutes of\ncomplete flow",
+    "sub": "No interruptions. No notifications.\nOnly what moves the needle.",
+    "timer": {
+      "flow": "In flow",
+      "paused": "Paused",
+      "ready": "Ready"
+    },
+    "task": {
+      "question": "What's your highest impact task?",
+      "placeholder": "Write chapter 3, finish proposal, code...",
+      "active": "Active task"
+    },
+    "start": "Start Round Two",
+    "pause": "Pause",
+    "resume": "Continue",
+    "complete": "Complete",
+    "dnd": "Do Not Disturb mode active during session",
+    "alert": {
+      "noTask": "What's your task?",
+      "noTaskMsg": "Define the high-impact task before starting.",
+      "doneTitle": "Massive Action completed!",
+      "doneMsg": "+40 identity points. Deep work forges who you are.",
+      "back": "Back"
+    }
+  },
+  "coach": {
+    "title": "Coach",
+    "subtitle": "Biochemistry of Consciousness",
+    "welcome": "Hello. I'm here to help you forge a new identity and recover your center.\n\nWhat is your body and mind feeling right now?",
+    "typing": "Typing...",
+    "placeholder": "Write what you feel..."
+  },
+  "historial": {
+    "title": "History",
+    "nivelLabel": "Identity Level",
+    "empty": "No protocols yet.",
+    "emptySub": "Do your first check-in."
+  },
+  "guia": {
+    "title": "Tester Guide",
+    "intro": "Thank you for testing Solen. This guide explains how to install the app and which flows to test.",
+    "sections": {
+      "install": {
+        "title": "Installation",
+        "items": [
+          "Open the download link we shared with you.",
+          "If Android asks to enable \"Install apps from unknown sources\", enable it in Settings → Security.",
+          "Install the APK and open Solen.",
+          "Register with your email and a password (minimum 8 characters, at least one letter and one number)."
+        ]
+      },
+      "flows": {
+        "title": "Flows to test",
+        "items": [
+          "① Registration and login — register, sign out and sign back in.",
+          "② Round One — tap \"Round One\" and complete the breathing protocol.",
+          "③ Morning Journal — complete the journal before noon.",
+          "④ Massive Action — start the round and verify the timer works.",
+          "⑤ Status protocol — move the slider and tap the protocol button.",
+          "⑥ Coach — send a message and wait for the AI response.",
+          "⑦ Pineal — start Round Three and complete the session.",
+          "⑧ Integrity Journal — complete it at the end of the day.",
+          "⑨ History — verify that the day's data appears."
+        ]
+      },
+      "bugs": {
+        "title": "How to report a bug",
+        "items": [
+          "Describe what you did step by step.",
+          "Indicate what you expected to happen and what happened instead.",
+          "If possible, attach a screenshot.",
+          "Send us the report through the channel we indicated."
+        ]
+      },
+      "notes": {
+        "title": "Important notes",
+        "items": [
+          "This is a test version — data may be reset between versions.",
+          "The AI Coach uses real credits, use it wisely.",
+          "If the app doesn't load data, check your internet connection.",
+          "If you find a crash, close and reopen the app before reporting."
+        ]
+      }
+    },
+    "version": "Beta version · Solen"
+  }
+}

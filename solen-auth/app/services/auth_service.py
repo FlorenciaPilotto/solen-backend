@@ -82,7 +82,8 @@ class AuthService:
             )
         )
         record = result.scalar_one_or_none()
-        if not record or record.expires_at < datetime.now(timezone.utc):
+        expires_at = record.expires_at if (record and record.expires_at.tzinfo) else (record.expires_at.replace(tzinfo=timezone.utc) if record else None)
+        if not record or expires_at < datetime.now(timezone.utc):
             raise UnauthorizedError("Refresh token inválido o expirado.")
 
         user = await self._get_user_by_id(user_id)

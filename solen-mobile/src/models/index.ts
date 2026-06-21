@@ -49,9 +49,20 @@ export interface JournalEntry {
   puntosGanados: number;
 }
 
+// ── Journal de Inicio (mañana) ───────────────────────────────────
+
+export interface MorningJournalEntry {
+  id: string;
+  fecha: string;
+  energia: number;        // 0–100
+  intencion: string;
+  identidad: string;
+  puntosGanados: number;
+}
+
 // ── Sesiones de respiración ──────────────────────────────────────
 
-export type ProtocoloRespiracion = 'rescate' | 'expansion' | 'coherencia';
+export type ProtocoloRespiracion = 'rescate' | 'expansion' | 'coherencia' | 'pineal';
 
 export interface BreathingSession {
   id: string;
@@ -101,6 +112,7 @@ export const PUNTOS = {
   MEDITACION:      20,
   RESPIRACION:     15,
   GYM_FALLO:       25,   // Estudio del dolor
+  MORNING_JOURNAL: 10,
   JOURNAL:         20,
   COHERENCIA_ALTA: 10,   // Coherencia >= 8
   ACCION_MASIVA:   40,

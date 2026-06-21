@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity,
-  ScrollView, Alert, ActivityIndicator,
+  ScrollView, ActivityIndicator,
 } from 'react-native';
 import Slider from '@react-native-community/slider';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useProtocolo } from '../hooks/useProtocolo';
 import { useAnalytics } from '../hooks/useAnalytics';
 import {
   getPoder, getRoundsHoy, getJournalHoy,
-  debeBloquear, activarRoundUno,
+  getMorningJournalHoy,
 } from '../store/storage';
 import { calcularModo, PoderIdentidad, RoundsDelDia } from '../models';
 import { useTimeBasedRound } from '../ui/hooks/useTimeBasedRound';
@@ -21,50 +22,39 @@ export function HomeScreen() {
   const navigation        = useNavigation<any>();
   const roundInfo         = useTimeBasedRound();
   const { generar, loading: generando } = useProtocolo();
-  const { data: analytics, loading: loadingAnalytics } = useAnalytics();
+  const { data: analytics } = useAnalytics();
+  const { t } = useTranslation();
 
   const [estado, setEstado]   = useState(70);
   const [poder, setPoder]     = useState<PoderIdentidad | null>(null);
   const [rounds, setRounds]   = useState<RoundsDelDia | null>(null);
-  const [journalDone, setJournalDone] = useState(false);
-  const [bloqueado, setBloqueado]     = useState(false);
+  const [journalDone, setJournalDone]           = useState(false);
+  const [morningJournalDone, setMorningJournalDone] = useState(false);
   const [loading, setLoading]         = useState(true);
 
-  const modo       = calcularModo(estado);
+  const modo        = calcularModo(estado);
   const estadoColor = colors[modo] ?? colors.neutro;
 
   const load = useCallback(async () => {
-    const [p, r, j, b] = await Promise.all([
-      getPoder(), getRoundsHoy(), getJournalHoy(), debeBloquear(),
+    const [p, r, j, mj] = await Promise.all([
+      getPoder(), getRoundsHoy(), getJournalHoy(), getMorningJournalHoy(),
     ]);
     setPoder(p); setRounds(r);
-    setJournalDone(!!j); setBloqueado(b);
+    setJournalDone(!!j); setMorningJournalDone(!!mj);
     setLoading(false);
   }, []);
 
   useEffect(() => { load(); }, [load]);
+  useFocusEffect(useCallback(() => { load(); }, [load]));
 
-  const handleRoundUno = async () => {
-    try {
-      const { puntos, racha } = await activarRoundUno();
-      // Registrar en analytics
-      const now = new Date();
-      const hora = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-      const { analyticsService } = require('../api/protocols');
-      analyticsService.registrarEvento('wakeup', { hora, puntos }).catch(() => {});
-      Alert.alert('Round Uno activado', `+${puntos} puntos de identidad\nRacha: ${racha} días`);
-      load();
-    } catch { Alert.alert('Error', 'No se pudo activar el Round Uno.'); }
+  const handleRoundUno = () => {
+    navigation.navigate('Respiracion', { protocolo: 'rescate', roundUno: true });
   };
 
   const handleProtocolo = async () => {
-    if (bloqueado) {
-      Alert.alert('Acceso bloqueado', 'No activaste el Round Uno antes de las 5:30 AM.');
-      return;
-    }
     const protocolo = await generar({
       energy: estado,
-      stress: 100 - estado,  // estrés inversamente proporcional al estado
+      stress: 100 - estado,
       focus: Math.round(estado * 0.85),
       available_minutes: 90,
     });
@@ -76,7 +66,17 @@ export function HomeScreen() {
   };
 
   const hour = new Date().getHours();
-  const greeting = hour < 12 ? 'Buenos días' : hour < 20 ? 'Buenas tardes' : 'Buenas noches';
+  const greeting = hour < 12
+    ? t('home.greeting.morning')
+    : hour < 20
+      ? t('home.greeting.afternoon')
+      : t('home.greeting.evening');
+
+  const selectorLabel = modo === 'supervivencia'
+    ? t('home.selector.labelSurvival')
+    : modo === 'creacion'
+      ? t('home.selector.labelCreation')
+      : t('home.selector.labelNeutral');
 
   if (loading) return (
     <View style={[styles.container, { alignItems: 'center', justifyContent: 'center' }]}>
@@ -87,44 +87,49 @@ export function HomeScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 
-      {/* Header con round activo */}
+      {/* Header */}
       <View style={styles.header}>
-        <View>
+        <View style={styles.headerTop}>
+          <Text style={styles.name}>{greeting}, {user?.name}</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Guia')}>
+            <Text style={styles.infoBtn}>ⓘ</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.headerBottom}>
           <Text style={[styles.roundTag, { color: roundInfo.colorPrimary }]}>
             {roundInfo.label}
           </Text>
-          <Text style={styles.name}>{greeting}, {user?.name}</Text>
+          <TouchableOpacity onPress={signOut}>
+            <Text style={styles.logout}>{t('home.signOut')}</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={signOut}>
-          <Text style={styles.logout}>Salir</Text>
-        </TouchableOpacity>
       </View>
 
-      {/* Dashboard analytics del backend */}
+      {/* Dashboard analytics */}
       {analytics && (
         <View style={styles.dashRow}>
           <View style={styles.dashCard}>
             <Text style={[styles.dashNum, { color: colors.creacion.primary }]}>
               {analytics.modo_creacion_pct.toFixed(0)}%
             </Text>
-            <Text style={styles.dashLabel}>Creación</Text>
+            <Text style={styles.dashLabel}>{t('home.analytics.creation')}</Text>
           </View>
           <View style={styles.dashCard}>
             <Text style={[styles.dashNum, { color: colors.pineal.primary }]}>
               {analytics.racha}
             </Text>
-            <Text style={styles.dashLabel}>Racha</Text>
+            <Text style={styles.dashLabel}>{t('home.analytics.streak')}</Text>
           </View>
           <View style={styles.dashCard}>
             <Text style={[styles.dashNum, { color: colors.neutro.primary }]}>
               {analytics.biohack_level}
             </Text>
-            <Text style={styles.dashLabel}>Bio-Hack</Text>
+            <Text style={styles.dashLabel}>{t('home.analytics.biohack')}</Text>
           </View>
         </View>
       )}
 
-      {/* Poder de identidad local */}
+      {/* Poder de identidad */}
       {poder && (
         <View style={styles.poderRow}>
           <View style={styles.poderBarWrap}>
@@ -134,16 +139,14 @@ export function HomeScreen() {
             }]} />
           </View>
           <Text style={[styles.poderPts, { color: estadoColor.primary }]}>
-            {poder.total} pts · Nivel {poder.nivel}
+            {poder.total} {t('common.pts')} · Nivel {poder.nivel}
           </Text>
         </View>
       )}
 
-      {/* Selector de estado / frecuencia */}
+      {/* Selector de estado */}
       <View style={[styles.selectorCard, { borderColor: estadoColor.border, backgroundColor: estadoColor.bg }]}>
-        <Text style={styles.selectorLabel}>
-          {modo === 'supervivencia' ? 'Supervivencia' : modo === 'creacion' ? 'Creación' : 'Neutro'}
-        </Text>
+        <Text style={styles.selectorLabel}>{selectorLabel}</Text>
         <Text style={[styles.selectorValue, { color: estadoColor.primary }]}>{estado}</Text>
         <Slider
           style={styles.slider}
@@ -154,12 +157,12 @@ export function HomeScreen() {
           thumbTintColor={estadoColor.primary}
         />
         <View style={styles.sliderLabels}>
-          <Text style={styles.sliderEnd}>Supervivencia</Text>
-          <Text style={styles.sliderEnd}>Creación</Text>
+          <Text style={styles.sliderEnd}>{t('home.selector.survival')}</Text>
+          <Text style={styles.sliderEnd}>{t('home.selector.creation')}</Text>
         </View>
       </View>
 
-      {/* Botón de protocolo → backend */}
+      {/* Botón de protocolo */}
       <TouchableOpacity
         style={[styles.protocolBtn, { borderColor: estadoColor.border, backgroundColor: estadoColor.bg }]}
         onPress={handleProtocolo}
@@ -170,18 +173,32 @@ export function HomeScreen() {
           ? <ActivityIndicator color={estadoColor.primary} />
           : <>
               <Text style={[styles.protocolBtnText, { color: estadoColor.primary }]}>
-                {modo === 'supervivencia' ? 'Protocolo de Rescate' : 'Protocolo de Expansión'}
+                {modo === 'supervivencia' ? t('home.protocol.rescue') : t('home.protocol.expansion')}
               </Text>
               <Text style={styles.protocolBtnSub}>
-                {modo === 'supervivencia' ? '5 min · Ancla de Serotonina' : '10 min · Fuego y Magnetismo'}
+                {modo === 'supervivencia' ? t('home.protocol.rescueSub') : t('home.protocol.expansionSub')}
               </Text>
             </>
         }
       </TouchableOpacity>
 
-      {/* Rounds */}
-      <Text style={styles.sectionTitle}>Rounds del día</Text>
+      <Text style={styles.sectionTitle}>{t('home.rounds.title')}</Text>
 
+      {/* Journal de Inicio */}
+      <TouchableOpacity
+        style={[styles.journalBtn, morningJournalDone && styles.journalDone]}
+        onPress={() => { if (!morningJournalDone) navigation.navigate('Journal'); }}
+        disabled={morningJournalDone}
+      >
+        <Text style={styles.journalTitle}>
+          {morningJournalDone ? t('home.rounds.journalStartDone') : t('home.rounds.journalStart')}
+        </Text>
+        <Text style={styles.journalSub}>
+          {morningJournalDone ? t('home.rounds.journalStartDoneSub') : t('home.rounds.journalStartSub')}
+        </Text>
+      </TouchableOpacity>
+
+      {/* Round Uno */}
       <TouchableOpacity
         style={[styles.roundCard, rounds?.roundUnoActivado && styles.roundCardDone]}
         onPress={rounds?.roundUnoActivado ? undefined : handleRoundUno}
@@ -190,47 +207,49 @@ export function HomeScreen() {
         <View style={styles.roundLeft}>
           <View style={[styles.roundDot, rounds?.roundUnoActivado && styles.roundDotDone]} />
           <View>
-            <Text style={styles.roundTitle}>Round Uno</Text>
-            <Text style={styles.roundSub}>5:00 AM · +15–50 pts</Text>
+            <Text style={styles.roundTitle}>{t('home.rounds.roundOne')}</Text>
+            <Text style={styles.roundSub}>{t('home.rounds.roundOneSub')}</Text>
           </View>
         </View>
         {rounds?.roundUnoActivado
           ? <Text style={styles.roundCheck}>✓ {rounds.roundUnoHora}</Text>
-          : <Text style={styles.roundAction}>Activar →</Text>}
+          : <Text style={styles.roundAction}>{t('home.rounds.activate')}</Text>}
       </TouchableOpacity>
 
+      {/* Acción Masiva */}
       <TouchableOpacity style={styles.roundCard} onPress={() => navigation.navigate('AccionMasiva')}>
         <View style={styles.roundLeft}>
           <View style={styles.roundDot} />
           <View>
-            <Text style={styles.roundTitle}>Round Dos · Acción Masiva</Text>
-            <Text style={styles.roundSub}>90 min · +40 pts</Text>
+            <Text style={styles.roundTitle}>{t('home.rounds.actionMassive')}</Text>
+            <Text style={styles.roundSub}>{t('home.rounds.actionMassiveSub')}</Text>
           </View>
         </View>
-        <Text style={styles.roundAction}>Iniciar →</Text>
+        <Text style={styles.roundAction}>{t('home.rounds.start')}</Text>
       </TouchableOpacity>
 
+      {/* Pineal */}
       <TouchableOpacity style={styles.roundCard} onPress={() => navigation.navigate('Pineal')}>
         <View style={styles.roundLeft}>
           <View style={[styles.roundDot, { borderColor: colors.pineal.border }]} />
           <View>
-            <Text style={styles.roundTitle}>Round Tres · Pineal</Text>
-            <Text style={styles.roundSub}>22:00 · +20 pts</Text>
+            <Text style={styles.roundTitle}>{t('home.rounds.pineal')}</Text>
+            <Text style={styles.roundSub}>{t('home.rounds.pinealSub')}</Text>
           </View>
         </View>
-        <Text style={styles.roundAction}>Iniciar →</Text>
+        <Text style={styles.roundAction}>{t('home.rounds.start')}</Text>
       </TouchableOpacity>
 
-      {/* Journal */}
+      {/* Journal de Integridad */}
       <TouchableOpacity
         style={[styles.journalBtn, journalDone && styles.journalDone]}
         onPress={() => navigation.navigate('IntegrityJournal')}
       >
         <Text style={styles.journalTitle}>
-          {journalDone ? '✓ Journal completado' : 'Journal de Integridad'}
+          {journalDone ? t('home.rounds.journalIntegrityDone') : t('home.rounds.journalIntegrity')}
         </Text>
         <Text style={styles.journalSub}>
-          {journalDone ? 'Ver resumen' : 'Módulo nocturno · +20 pts'}
+          {journalDone ? t('home.rounds.journalIntegrityDoneSub') : t('home.rounds.journalIntegritySub')}
         </Text>
       </TouchableOpacity>
 
@@ -241,9 +260,9 @@ export function HomeScreen() {
             {analytics?.racha ?? poder?.racha ?? 0}
           </Text>
           <View>
-            <Text style={styles.rachaLabel}>días de racha</Text>
+            <Text style={styles.rachaLabel}>{t('home.streak.days')}</Text>
             <Text style={styles.rachaSub}>
-              Mejor: {analytics?.mejor_racha ?? poder?.mejorRacha ?? 0} días
+              {t('home.streak.best')} {analytics?.mejor_racha ?? poder?.mejorRacha ?? 0} días
             </Text>
           </View>
         </View>
@@ -256,10 +275,13 @@ export function HomeScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
   content: { padding: spacing.lg, paddingTop: spacing.xl + spacing.md, paddingBottom: spacing.xxl },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: spacing.lg },
-  roundTag: { fontSize: 9, fontWeight: fonts.medium, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 3 },
+  header: { marginBottom: spacing.lg },
+  headerTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  headerBottom: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 6 },
+  roundTag: { fontSize: 9, fontWeight: fonts.medium, textTransform: 'uppercase', letterSpacing: 2 },
   name: { fontSize: 24, fontWeight: fonts.light, color: colors.textPrimary },
-  logout: { fontSize: 11, fontWeight: fonts.light, color: colors.textHint, marginTop: 4 },
+  logout: { fontSize: 11, fontWeight: fonts.light, color: colors.textHint },
+  infoBtn: { fontSize: 18, color: colors.textHint },
 
   dashRow: { flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md },
   dashCard: { flex: 1, backgroundColor: colors.bgCard, borderWidth: 0.5, borderColor: colors.bgCardBorder, borderRadius: radius.md, padding: spacing.sm, alignItems: 'center' },
@@ -278,7 +300,7 @@ const styles = StyleSheet.create({
   sliderLabels: { flexDirection: 'row', justifyContent: 'space-between' },
   sliderEnd: { fontSize: 9, fontWeight: fonts.light, color: colors.textHint },
 
-  protocolBtn: { borderWidth: 0.5, borderRadius: radius.full, padding: spacing.md, alignItems: 'center', marginBottom: spacing.lg, minHeight: 52, justifyContent: 'center' },
+  protocolBtn: { borderWidth: 0.5, borderRadius: radius.full, padding: spacing.md, alignItems: 'center', marginBottom: spacing.sm, minHeight: 52, justifyContent: 'center' },
   protocolBtnText: { fontSize: 14, fontWeight: fonts.regular },
   protocolBtnSub: { fontSize: 10, fontWeight: fonts.light, color: colors.textHint, marginTop: 2 },
 

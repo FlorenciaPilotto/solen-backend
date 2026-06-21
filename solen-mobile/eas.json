@@ -16,6 +16,19 @@
         "EXPO_PUBLIC_NOTIFY_URL": "https://solen-notify-production.up.railway.app"
       }
     },
+    "internal": {
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "channel": "production",
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_AUTH_URL": "https://solen-auth-production-f4b9.up.railway.app",
+        "EXPO_PUBLIC_PROTOCOLS_URL": "https://solen-protocols-production-10e0.up.railway.app",
+        "EXPO_PUBLIC_ANALYTICS_URL": "https://solen-analytics-production-fcb5.up.railway.app",
+        "EXPO_PUBLIC_NOTIFY_URL": "https://solen-notify-production.up.railway.app"
+      }
+    },
     "production": {
       "android": {
         "buildType": "app-bundle"
@@ -31,6 +44,19 @@
     }
   },
   "submit": {
-    "production": {}
+    "internal": {
+      "android": {
+        "track": "internal",
+        "releaseStatus": "draft",
+        "serviceAccountKeyPath": "./google-service-account.json"
+      }
+    },
+    "production": {
+      "android": {
+        "track": "production",
+        "releaseStatus": "completed",
+        "serviceAccountKeyPath": "./google-service-account.json"
+      }
+    }
   }
 }

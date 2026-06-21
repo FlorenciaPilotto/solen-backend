@@ -1,0 +1,13 @@
+[
+  {
+    "id": 1,
+    "name": "rounds-restructura",
+    "status": "done",
+    "acceptance": [
+      "El orden en HomeScreen es: Journal de Inicio → Round Uno → Acción Masiva → Pineal → Journal de Integridad",
+      "Round Uno se puede activar a cualquier hora del día, sin bloqueo por horario (eliminar debeBloquear y el estado 'bloqueado')",
+      "El botón de Protocolo ya no muestra el error 'No activaste el Round Uno antes de las 5:30 AM'",
+      "El resto de la lógica y navegación de rounds no cambia"
+    ]
+  }
+]

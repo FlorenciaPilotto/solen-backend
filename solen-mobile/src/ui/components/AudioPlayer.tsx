@@ -155,8 +155,9 @@ export function AudioPlayer({ protocolo, onComplete, onClose }: AudioPlayerProps
 
   const loadSound = async () => {
     try {
+      const source = typeof track.uri === 'number' ? track.uri : { uri: track.uri };
       const { sound } = await Audio.Sound.createAsync(
-        { uri: track.uri },
+        source,
         { shouldPlay: true, volume: 1.0 },
         onPlaybackStatus,
       );

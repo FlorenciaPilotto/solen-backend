@@ -1,229 +1,181 @@
 import React, { useState } from 'react';
 import {
-  View, Text, StyleSheet, TouchableOpacity, TextInput,
-  ScrollView, Alert,
+  View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView,
 } from 'react-native';
+import Slider from '@react-native-community/slider';
 import { useNavigation } from '@react-navigation/native';
-import { saveJournal } from '../store/storage';
+import { useTranslation } from 'react-i18next';
+import { saveMorningJournal } from '../store/storage';
 import { colors, spacing, radius, fonts } from '../theme';
 
-type Gatillo = 'ninguno' | 'pereza' | 'miedo' | 'estrategia';
-
-const STEPS = ['coherencia', 'gatillo', 'gratitud', 'cierre'] as const;
-type Step = typeof STEPS[number];
+type Step = 'energia' | 'intencion' | 'identidad';
+const STEPS: Step[] = ['energia', 'intencion', 'identidad'];
 
 export function JournalScreen() {
   const navigation = useNavigation();
-  const [step, setStep] = useState<Step>('coherencia');
-  const [coherencia, setCoherencia] = useState(0);
-  const [gatillo, setGatillo] = useState<Gatillo>('ninguno');
-  const [textoCoherencia, setTextoCoherencia] = useState('');
-  const [textoGratitud, setTextoGratitud] = useState('');
-  const [textoCierre, setTextoCierre] = useState('');
-  const [saving, setSaving] = useState(false);
+  const { t } = useTranslation();
+  const [step, setStep]           = useState<Step>('energia');
+  const [energia, setEnergia]     = useState(70);
+  const [intencion, setIntencion] = useState('');
+  const [identidad, setIdentidad] = useState('');
+  const [saving, setSaving]       = useState(false);
+  const [error, setError]         = useState('');
 
-  const stepIdx = STEPS.indexOf(step);
-  const progress = (stepIdx + 1) / STEPS.length;
-
-  const next = () => {
-    const nextStep = STEPS[stepIdx + 1];
-    if (nextStep) setStep(nextStep);
-  };
+  const stepIdx      = STEPS.indexOf(step);
+  const energiaLabel = energia >= 70
+    ? t('journal.energy.high')
+    : energia >= 40
+      ? t('journal.energy.medium')
+      : t('journal.energy.low');
+  const energiaColor = energia >= 70
+    ? colors.creacion.primary
+    : energia >= 40
+      ? colors.pineal.primary
+      : colors.supervivencia.primary;
 
   const handleSave = async () => {
-    if (!textoCierre.trim()) {
-      Alert.alert('Completá el cierre', 'Escribí aunque sea una línea sobre tu nueva identidad.');
-      return;
-    }
-    setSaving(true);
+    if (!identidad.trim()) { setError(t('journal.identity.error')); return; }
+    setSaving(true); setError('');
     try {
-      await saveJournal({
-        coherencia,
-        gatillo,
-        textoCoherencia: textoCoherencia || '—',
-        textoGratitud: textoGratitud || '—',
-        textoCierre,
-        modoDominante: 'creacion',
-      });
-      // Registrar en analytics (fire & forget)
-      const { analyticsService } = require('../api/protocols');
-      analyticsService.registrarEvento('journal', { coherencia, gatillo }).catch(() => {});
-      Alert.alert(
-        'Día cerrado',
-        `Coherencia: ${coherencia}/10\n+20 puntos de identidad${coherencia >= 8 ? '\n+10 por alta coherencia' : ''}`,
-        [{ text: 'Cerrar', onPress: () => navigation.goBack() }],
-      );
+      await saveMorningJournal({ energia, intencion: intencion || '—', identidad });
+      navigation.goBack();
     } catch {
-      Alert.alert('Error', 'No se pudo guardar el journal.');
+      setError(t('journal.saveError'));
     } finally {
       setSaving(false);
     }
   };
 
   const dots = STEPS.map((s, i) => (
-    <View key={s} style={[styles.dot, i === stepIdx && styles.dotActive, i < stepIdx && styles.dotDone]} />
+    <View
+      key={s}
+      style={[styles.dot, i === stepIdx && styles.dotActive, i < stepIdx && styles.dotDone]}
+    />
   ));
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
+    >
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.back}>
         <Text style={styles.backText}>✕</Text>
       </TouchableOpacity>
 
-      <Text style={styles.titulo}>Journal de{'\n'}Integridad</Text>
-      <Text style={styles.subtitulo}>22:00 · Cierre del día</Text>
+      <Text style={styles.titulo}>{t('journal.title')}</Text>
+      <Text style={styles.subtitulo}>{t('journal.subtitle')}</Text>
 
-      {/* Barra de progreso */}
       <View style={styles.dotsRow}>{dots}</View>
 
-      {/* Step 1: Coherencia */}
-      {step === 'coherencia' && (
+      {step === 'energia' && (
         <View style={styles.stepWrap}>
-          <Text style={styles.stepLabel}>Coherencia · 1 de 4</Text>
-          <Text style={styles.stepQ}>¿Mi claridad mental de esta mañana coincidió con mi aplicación real hoy?</Text>
-          <View style={styles.scaleRow}>
-            {[1,2,3,4,5,6,7,8,9,10].map(n => (
-              <TouchableOpacity
-                key={n}
-                style={[styles.scaleBtn, coherencia === n && styles.scaleBtnActive]}
-                onPress={() => setCoherencia(n)}
-              >
-                <Text style={[styles.scaleBtnText, coherencia === n && styles.scaleBtnTextActive]}>{n}</Text>
-              </TouchableOpacity>
-            ))}
+          <Text style={styles.stepLabel}>{t('journal.energy.label')}</Text>
+          <Text style={styles.stepQ}>{t('journal.energy.question')}</Text>
+
+          <View style={styles.energiaDisplay}>
+            <Text style={[styles.energiaNum, { color: energiaColor }]}>{energia}</Text>
+            <Text style={[styles.energiaLabel, { color: energiaColor }]}>{energiaLabel}</Text>
           </View>
-          {coherencia > 0 && (
-            <Text style={[styles.coherenciaInsight, { color: coherencia <= 4 ? colors.supervivencia.primary : coherencia <= 7 ? colors.pineal.primary : colors.creacion.primary }]}>
-              {coherencia <= 4 ? 'Brecha detectada. Sin culpa. Con claridad.' :
-               coherencia <= 7 ? 'Coherencia en construcción. Seguís en el camino.' :
-               'Alta coherencia. Día de construcción real.'}
-            </Text>
-          )}
+
+          <Slider
+            style={styles.slider}
+            minimumValue={0} maximumValue={100} step={1}
+            value={energia} onValueChange={setEnergia}
+            minimumTrackTintColor={energiaColor}
+            maximumTrackTintColor={colors.border}
+            thumbTintColor={energiaColor}
+          />
+          <View style={styles.sliderLabels}>
+            <Text style={styles.sliderEnd}>{t('journal.energy.sliderLow')}</Text>
+            <Text style={styles.sliderEnd}>{t('journal.energy.sliderHigh')}</Text>
+          </View>
+
+          <TouchableOpacity style={styles.btnNext} onPress={() => setStep('intencion')}>
+            <Text style={styles.btnNextText}>{t('common.continue')}</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {step === 'intencion' && (
+        <View style={styles.stepWrap}>
+          <Text style={styles.stepLabel}>{t('journal.intention.label')}</Text>
+          <Text style={styles.stepQ}>{t('journal.intention.question')}</Text>
+
           <TextInput
             style={styles.input}
-            placeholder="¿Qué pasó entre lo que sabías y lo que hiciste? (opcional)"
+            placeholder={t('journal.intention.placeholder')}
             placeholderTextColor={colors.textHint}
-            value={textoCoherencia}
-            onChangeText={setTextoCoherencia}
+            value={intencion}
+            onChangeText={setIntencion}
             multiline
             numberOfLines={3}
+            autoFocus
           />
-          <TouchableOpacity style={styles.btnNext} onPress={next} disabled={coherencia === 0}>
-            <Text style={styles.btnNextText}>Continuar</Text>
+
+          <TouchableOpacity style={styles.btnNext} onPress={() => setStep('identidad')}>
+            <Text style={styles.btnNextText}>{t('common.continue')}</Text>
           </TouchableOpacity>
         </View>
       )}
 
-      {/* Step 2: Gatillo */}
-      {step === 'gatillo' && (
+      {step === 'identidad' && (
         <View style={styles.stepWrap}>
-          <Text style={styles.stepLabel}>Gatillo · 2 de 4</Text>
-          <Text style={styles.stepQ}>Si fallé en algo hoy: ¿fue por pereza, miedo o falta de estrategia?</Text>
-          <View style={styles.gatilloRow}>
-            {(['ninguno','pereza','miedo','estrategia'] as Gatillo[]).map(g => (
-              <TouchableOpacity
-                key={g}
-                style={[styles.gatilloBtn, gatillo === g && styles.gatilloBtnActive]}
-                onPress={() => setGatillo(g)}
-              >
-                <Text style={[styles.gatilloBtnText, gatillo === g && styles.gatilloBtnTextActive]}>
-                  {g === 'ninguno' ? 'No fallé' : g.charAt(0).toUpperCase() + g.slice(1)}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-          <TouchableOpacity style={styles.btnNext} onPress={next}>
-            <Text style={styles.btnNextText}>Continuar</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+          <Text style={styles.stepLabel}>{t('journal.identity.label')}</Text>
+          <Text style={styles.stepQ}>{t('journal.identity.question')}</Text>
 
-      {/* Step 3: Gratitud */}
-      {step === 'gratitud' && (
-        <View style={styles.stepWrap}>
-          <Text style={styles.stepLabel}>Gratitud real · 3 de 4</Text>
-          <Text style={styles.stepQ}>Trae a tu mente un regalo que hayas recibido hoy. Saboréalo ahora. ¿Cómo se siente en el pecho?</Text>
-          <Text style={styles.inputLabel}>El regalo fue...</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="una charla, un café, un logro pequeño..."
-            placeholderTextColor={colors.textHint}
-            value={textoGratitud}
-            onChangeText={setTextoGratitud}
-            multiline
-            numberOfLines={3}
-          />
-          <TouchableOpacity style={styles.btnNext} onPress={next}>
-            <Text style={styles.btnNextText}>Continuar</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
-      {/* Step 4: Cierre de identidad */}
-      {step === 'cierre' && (
-        <View style={styles.stepWrap}>
-          <Text style={styles.stepLabel}>Identidad · 4 de 4</Text>
-          <Text style={styles.stepQ}>Escribí una acción que hoy confirmó que ya no sos la persona del pasado.</Text>
           <TextInput
             style={[styles.input, styles.inputLarge]}
-            placeholder="Hoy elegí... a pesar de..."
+            placeholder={t('journal.identity.placeholder')}
             placeholderTextColor={colors.textHint}
-            value={textoCierre}
-            onChangeText={setTextoCierre}
+            value={identidad}
+            onChangeText={v => { setIdentidad(v); setError(''); }}
             multiline
-            numberOfLines={5}
+            numberOfLines={4}
+            autoFocus
           />
-          <Text style={styles.wordCount}>{textoCierre.trim().split(/\s+/).filter(Boolean).length} palabras</Text>
+          {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
           <TouchableOpacity
-            style={[styles.btnNext, styles.btnCierre]}
+            style={styles.btnNext}
             onPress={handleSave}
             disabled={saving}
           >
-            <Text style={styles.btnNextText}>{saving ? 'Guardando...' : 'Cerrar el día'}</Text>
+            <Text style={styles.btnNextText}>{saving ? t('common.saving') : t('journal.start')}</Text>
           </TouchableOpacity>
         </View>
       )}
-
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
-  content: { padding: spacing.lg, paddingTop: spacing.xl + spacing.md, paddingBottom: spacing.xxl },
-  back: { position: 'absolute', top: spacing.xl, right: spacing.lg, zIndex: 10 },
-  backText: { fontSize: 16, color: colors.textMuted },
-  titulo: { fontSize: 28, fontWeight: fonts.light, color: colors.textPrimary, lineHeight: 34, marginBottom: 4 },
-  subtitulo: { fontSize: 11, fontWeight: fonts.light, color: colors.textHint, marginBottom: spacing.xl },
-  dotsRow: { flexDirection: 'row', gap: 6, marginBottom: spacing.xl },
-  dot: { width: 5, height: 5, borderRadius: 2.5, backgroundColor: colors.border },
-  dotActive: { width: 16, height: 5, borderRadius: 3, backgroundColor: colors.accent },
-  dotDone: { backgroundColor: colors.accentMuted },
-
-  stepWrap: { gap: spacing.md },
-  stepLabel: { fontSize: 9, fontWeight: fonts.medium, color: colors.textHint, textTransform: 'uppercase', letterSpacing: 2 },
-  stepQ: { fontSize: 14, fontWeight: fonts.light, color: colors.textSecondary, lineHeight: 22 },
-
-  scaleRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 4 },
-  scaleBtn: { flex: 1, minWidth: 26, height: 36, borderRadius: 6, borderWidth: 0.5, borderColor: colors.border, backgroundColor: colors.bgCard, alignItems: 'center', justifyContent: 'center' },
-  scaleBtnActive: { backgroundColor: colors.accentMuted, borderColor: colors.accent },
-  scaleBtnText: { fontSize: 11, fontWeight: fonts.light, color: colors.textMuted },
-  scaleBtnTextActive: { color: colors.accent, fontWeight: fonts.medium },
-  coherenciaInsight: { fontSize: 12, fontWeight: fonts.light, textAlign: 'center' },
-
-  gatilloRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-  gatilloBtn: { flex: 1, minWidth: 80, padding: spacing.sm, borderRadius: radius.sm, borderWidth: 0.5, borderColor: colors.border, backgroundColor: colors.bgCard, alignItems: 'center' },
-  gatilloBtnActive: { backgroundColor: colors.accentMuted, borderColor: colors.accent },
-  gatilloBtnText: { fontSize: 12, fontWeight: fonts.light, color: colors.textMuted },
-  gatilloBtnTextActive: { color: colors.accent, fontWeight: fonts.medium },
-
-  inputLabel: { fontSize: 10, fontWeight: fonts.light, color: colors.textHint },
-  input: { backgroundColor: colors.bgCard, borderWidth: 0.5, borderColor: colors.bgCardBorder, borderRadius: radius.md, padding: spacing.md, fontSize: 13, fontWeight: fonts.light, color: colors.textPrimary, lineHeight: 20 },
+  container:  { flex: 1, backgroundColor: colors.bg },
+  content:    { padding: spacing.lg, paddingTop: spacing.xl + spacing.md, paddingBottom: spacing.xxl },
+  back:       { position: 'absolute', top: spacing.xl, right: spacing.lg, zIndex: 10 },
+  backText:   { fontSize: 16, color: colors.textMuted },
+  titulo:     { fontSize: 28, fontWeight: fonts.light, color: colors.textPrimary, lineHeight: 34, marginBottom: 4 },
+  subtitulo:  { fontSize: 11, fontWeight: fonts.light, color: colors.textHint, marginBottom: spacing.xl },
+  dotsRow:    { flexDirection: 'row', gap: 6, marginBottom: spacing.xl },
+  dot:        { width: 5, height: 5, borderRadius: 2.5, backgroundColor: colors.border },
+  dotActive:  { width: 16, height: 5, borderRadius: 3, backgroundColor: colors.creacion.primary },
+  dotDone:    { backgroundColor: colors.accentMuted },
+  stepWrap:   { gap: spacing.md },
+  stepLabel:  { fontSize: 9, fontWeight: fonts.medium, color: colors.textHint, textTransform: 'uppercase', letterSpacing: 2 },
+  stepQ:      { fontSize: 18, fontWeight: fonts.light, color: colors.textSecondary, lineHeight: 26 },
+  energiaDisplay: { alignItems: 'center', gap: 4, paddingVertical: spacing.md },
+  energiaNum:     { fontSize: 52, fontWeight: fonts.light, lineHeight: 56 },
+  energiaLabel:   { fontSize: 12, fontWeight: fonts.medium },
+  slider:       { width: '100%' },
+  sliderLabels: { flexDirection: 'row', justifyContent: 'space-between' },
+  sliderEnd:    { fontSize: 9, fontWeight: fonts.light, color: colors.textHint },
+  input: {
+    backgroundColor: colors.bgCard, borderWidth: 0.5, borderColor: colors.bgCardBorder,
+    borderRadius: radius.md, padding: spacing.md, fontSize: 13, fontWeight: fonts.light,
+    color: colors.textPrimary, lineHeight: 20,
+  },
   inputLarge: { minHeight: 100 },
-  wordCount: { fontSize: 10, fontWeight: fonts.light, color: colors.textHint, textAlign: 'right' },
-
-  btnNext: { backgroundColor: colors.accent, borderRadius: radius.md, padding: spacing.md, alignItems: 'center' },
-  btnCierre: {},
+  errorText:  { fontSize: 12, color: colors.supervivencia.primary },
+  btnNext:     { backgroundColor: colors.accent, borderRadius: radius.md, padding: spacing.md, alignItems: 'center' },
   btnNextText: { fontSize: 16, fontWeight: fonts.medium, color: '#000000' },
 });

@@ -1,0 +1,21 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ./init.sh > /tmp/solen_init.log 2>&1 && echo '[harness] init.sh OK' || (echo '[harness] init.sh FALLÓ — revisa /tmp/solen_init.log' && tail -20 /tmp/solen_init.log)",
+            "description": "Antes de cerrar la sesión, verifica que TypeScript compila limpio."
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(./init.sh)",
+      "Bash(cd solen-mobile*)"
+    ]
+  }
+}
