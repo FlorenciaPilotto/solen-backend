@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   PoderIdentidad, RoundsDelDia, JournalEntry, BreathingSession,
-  AccionMasivaSession, PUNTOS, PuntoEvento,
+  AccionMasivaSession, MorningJournalEntry, PUNTOS, PuntoEvento,
 } from '../models';
 
 const KEYS = {
@@ -141,6 +141,28 @@ export async function getJournalHistorial(days = 30): Promise<JournalEntry[]> {
     if (entry) entries.push(entry);
   }
   return entries;
+}
+
+// ── Morning Journal ──────────────────────────────────────────────
+
+const MORNING_KEY = 'solen:morning_journal';
+
+export async function getMorningJournalHoy(): Promise<MorningJournalEntry | null> {
+  return get<MorningJournalEntry>(`${MORNING_KEY}:${todayStr()}`);
+}
+
+export async function saveMorningJournal(
+  entry: Pick<MorningJournalEntry, 'energia' | 'intencion' | 'identidad'>,
+): Promise<MorningJournalEntry> {
+  const full: MorningJournalEntry = {
+    ...entry,
+    id: `mj_${Date.now()}`,
+    fecha: todayStr(),
+    puntosGanados: PUNTOS.MORNING_JOURNAL,
+  };
+  await set(`${MORNING_KEY}:${todayStr()}`, full);
+  await addPuntos('MORNING_JOURNAL', PUNTOS.MORNING_JOURNAL, 'Journal de inicio completado');
+  return full;
 }
 
 // ── Breathing Sessions ───────────────────────────────────────────

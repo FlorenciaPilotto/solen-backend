@@ -43,6 +43,43 @@ const CIERRE_SUB: Record<Intencion, string> = {
   registrar: 'Sin presión. Lo que aparezca.',
 };
 
+// Preguntas dinámicas según la emoción del día
+const PREGUNTA_REGALO: Record<EmociónDia, string> = {
+  fuego:     '¿Qué alimentó tu fuego hoy?',
+  calma:     '¿Qué te dio paz hoy?',
+  gratitud:  '¿Qué regalo genuino recibiste hoy?',
+  confusion: '¿Hubo algo bueno aunque el día fue confuso?',
+  miedo:     '¿Qué te sostuvo a pesar del miedo?',
+  furia:     '¿Qué encontraste de valor en este día difícil?',
+};
+
+const PLACEHOLDER_REGALO: Record<EmociónDia, string> = {
+  fuego:     'un logro, una decisión que te costó, una certeza...',
+  calma:     'un momento de silencio, una conversación liviana...',
+  gratitud:  'una charla, un insight, un café tranquilo...',
+  confusion: 'algo pequeño que igual estuvo bien...',
+  miedo:     'alguien que te bancó, algo que no colapsó...',
+  furia:     'algo que igual funcionó, un aprendizaje...',
+};
+
+const PREGUNTA_IDENTIDAD: Record<EmociónDia, string> = {
+  fuego:     '¿Qué acción de hoy demostró que sos alguien de fuego?',
+  calma:     '¿Qué mantuviste en calma que antes te desequilibraba?',
+  gratitud:  '¿Qué acción confirmó que ya no sos la persona del pasado?',
+  confusion: '¿A pesar de la confusión, qué elegiste no abandonar?',
+  miedo:     '¿Qué hiciste a pesar del miedo?',
+  furia:     '¿Cómo canalizaste tu energía en lugar de destruir?',
+};
+
+const PLACEHOLDER_IDENTIDAD: Record<EmociónDia, string> = {
+  fuego:     'Hoy tomé la decisión que venía evitando...',
+  calma:     'Hoy respondí con calma cuando antes hubiera reaccionado...',
+  gratitud:  'Hoy elegí... a pesar de...',
+  confusion: 'Aunque no tenía claridad, seguí haciendo...',
+  miedo:     'Hoy actué aunque sentía miedo de...',
+  furia:     'En lugar de explotar, elegí...',
+};
+
 const EMOCIONES: { id: EmociónDia; label: string; descripcion: string; color: string }[] = [
   { id: 'fuego',     label: 'Fuego',     descripcion: 'Determinación · Certeza',     color: '#FF9F0A' },
   { id: 'calma',     label: 'Calma',     descripcion: 'Paz · Enfoque',               color: '#64D2FF' },
@@ -197,10 +234,12 @@ export function IntegrityJournalScreen() {
           <Text style={styles.stepTitle}>Cierre del día</Text>
           <Text style={styles.stepSub}>{intencion ? CIERRE_SUB[intencion] : ''}</Text>
 
-          <Text style={styles.inputLabel}>¿Qué regalo recibiste hoy?</Text>
+          <Text style={styles.inputLabel}>
+            {emocion ? PREGUNTA_REGALO[emocion] : '¿Qué regalo recibiste hoy?'}
+          </Text>
           <TextInput
             style={styles.input}
-            placeholder="una charla, un insight, un café tranquilo..."
+            placeholder={emocion ? PLACEHOLDER_REGALO[emocion] : 'una charla, un insight, un café tranquilo...'}
             placeholderTextColor={colors.textHint}
             value={gratitud}
             onChangeText={setGratitud}
@@ -208,10 +247,12 @@ export function IntegrityJournalScreen() {
             numberOfLines={3}
           />
 
-          <Text style={styles.inputLabel}>¿Qué acción confirmó que ya no sos la persona del pasado?</Text>
+          <Text style={styles.inputLabel}>
+            {emocion ? PREGUNTA_IDENTIDAD[emocion] : '¿Qué acción confirmó que ya no sos la persona del pasado?'}
+          </Text>
           <TextInput
             style={styles.input}
-            placeholder="Hoy elegí... a pesar de..."
+            placeholder={emocion ? PLACEHOLDER_IDENTIDAD[emocion] : 'Hoy elegí... a pesar de...'}
             placeholderTextColor={colors.textHint}
             value={logro}
             onChangeText={setLogro}

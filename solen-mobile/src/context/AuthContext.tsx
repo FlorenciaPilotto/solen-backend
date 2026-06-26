@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { authApi, notifyApi } from '../api/client';
+import { authApi, notifyApi, registerSignOutCallback } from '../api/client';
 
 interface AuthUser { access_token: string; refresh_token: string; user_id: string; email: string; name: string; }
 interface AuthContextValue {
@@ -25,6 +25,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     AsyncStorage.getItem('solen:user').then(raw => {
       if (raw) setUser(JSON.parse(raw));
     }).finally(() => setIsLoading(false));
+  }, []);
+
+  useEffect(() => {
+    registerSignOutCallback(() => setUser(null));
   }, []);
 
   const signIn = useCallback(async (email: string, password: string) => {

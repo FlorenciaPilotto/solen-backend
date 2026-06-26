@@ -14,11 +14,22 @@
         "backgroundColor": "#0B1226"
       }
     },
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
     "extra": {
       "eas": {
         "projectId": "1dc9056d-9281-43be-8d00-4a9f46fa0c9d"
       }
     },
-    "owner": "florpilo"
+    "owner": "florpilo",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/1dc9056d-9281-43be-8d00-4a9f46fa0c9d"
+    },
+    "ios": {}
   }
 }
