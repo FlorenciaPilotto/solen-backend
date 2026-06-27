@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width: 1024px; height: 500px;
+    background: #000;
+    font-family: -apple-system, 'SF Pro Display', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(212,175,85,0.12) 0%, transparent 65%);
+    top: 50%; left: 50%; transform: translate(-50%,-50%);
+  }
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+  }
+  .icon {
+    width: 80px; height: 80px;
+    border-radius: 20px;
+    background: #0B1226;
+    border: 0.5px solid rgba(212,175,85,0.4);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sun { width: 48px; height: 48px; position: relative; display: flex; align-items: center; justify-content: center; }
+  .sun-c { width: 12px; height: 12px; border-radius: 50%; background: #D4AF55; position: absolute; }
+  .sun-r { position: absolute; width: 1.5px; height: 18px; background: #D4AF55; top: 50%; left: 50%; transform-origin: bottom center; }
+  .logo { font-size: 80px; font-weight: 200; color: #fff; letter-spacing: 20px; text-transform: uppercase; }
+  .tag { font-size: 13px; font-weight: 400; color: rgba(255,255,255,0.3); letter-spacing: 5px; text-transform: uppercase; }
+  .pills { display: flex; gap: 12px; margin-top: 8px; }
+  .pill {
+    padding: 6px 16px;
+    border: 0.5px solid rgba(255,255,255,0.12);
+    border-radius: 100px;
+    font-size: 11px; font-weight: 300;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+  <div class="glow"></div>
+  <div class="content">
+    <div class="icon">
+      <div class="sun">
+        <div class="sun-c"></div>
+        <div class="sun-r" style="transform:translate(-50%,-100%) rotate(0deg)"></div>
+        <div class="sun-r" style="transform:translate(-50%,-100%) rotate(45deg)"></div>
+        <div class="sun-r" style="transform:translate(-50%,-100%) rotate(90deg)"></div>
+        <div class="sun-r" style="transform:translate(-50%,-100%) rotate(135deg)"></div>
+        <div class="sun-r" style="transform:translate(-50%,-100%) rotate(180deg)"></div>
+        <div class="sun-r" style="transform:translate(-50%,-100%) rotate(225deg)"></div>
+        <div class="sun-r" style="transform:translate(-50%,-100%) rotate(270deg)"></div>
+        <div class="sun-r" style="transform:translate(-50%,-100%) rotate(315deg)"></div>
+      </div>
+    </div>
+    <div class="logo">SOLEN</div>
+    <div class="tag">Sistema de Identidad</div>
+    <div class="pills">
+      <div class="pill">Neurociencia</div>
+      <div class="pill">Identidad</div>
+      <div class="pill">Bienestar</div>
+    </div>
+  </div>
+</body>
+</html>
